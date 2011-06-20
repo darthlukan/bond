@@ -2,6 +2,7 @@ from twisted.words.protocols import irc
 from twisted.internet import protocol, reactor
 from twisted.python import log
 from fnmatch import fnmatch
+import random
 import sys
 import time
 
@@ -52,9 +53,9 @@ class BondBot(irc.IRCClient):
     def is_owner(self, channel, user):
         denied = [
             "I'm sorry there chap, I belong to Great Britain.",
-            "I don't beleive we've met."
-            "Some people never learn."
-            "Come now darling, I have other things in mind for us."
+            "I don't beleive we've met.",
+            "Some people never learn.",
+            "Come now darling, I have other things in mind for us.",
             "You didn't think that was actually going to work, did you?"
             ]
         nick, host = user.split('!')
@@ -73,15 +74,15 @@ class BondBot(irc.IRCClient):
             'slaps %s with an unequaled pimp hand.'
             ]
         huggy = [
-            'hugs %s.'
-            'cuddles %s.'
-            'holds %s a little too long for comfort.'
+            'hugs %s.',
+            'cuddles %s.',
+            'holds %s a little too long for comfort.',
             'Shows %s his pedobear.'
             ]
         killy = [
-            'kills %s.'
-            'makes a title song credit out of %s.'
-            'busts out with the muy thai all up in %s\'s face.'
+            'kills %s.',
+            'makes a title song credit out of %s.',
+            'busts out with the muy thai all up in %s\'s face.',
             'takes %s down faster than a nameless henchmen.'
             ]
         def repeat(*args):
