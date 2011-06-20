@@ -1,11 +1,15 @@
 This is the story of two Python beginners making an IRC bot
-using the twisted framework ( Hopefully :P ).
+using the sockets, then porting functions to the
+twisted framework ( Hopefully :P ).
 
 This is the bot James bond would use if he were to bother
 with IRC!
 
+<<<<<<< HEAD
 Authors:
 
     Thomas Noe (iAmerikan)
     Brian Tomlinson [darthlukan]
 
+=======
+>>>>>>> 69cbb5daab49d00036cefee79acece5208851137
