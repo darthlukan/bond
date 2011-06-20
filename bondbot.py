@@ -2,6 +2,7 @@ from twisted.words.protocols import irc
 from twisted.internet import protocol, reactor
 from twisted.python import log
 from fnmatch import fnmatch
+import qbranch
 import random
 import sys
 import time
@@ -46,27 +47,6 @@ class BondBot(irc.IRCClient):
     def joined(self, channel):
         self.logger.log("[I have joined %s]" % channel)
 
-    # Security and commands down here    
-    # Thanks to zeekay for this!
-    owners = ['darthlukan', 'iAmerikan']
-
-    def is_owner(self, channel, user):
-        denied = [
-            "I'm sorry there chap, I belong to Great Britain.",
-            "I don't beleive we've met.",
-            "Some people never learn.",
-            "Come now darling, I have other things in mind for us.",
-            "You didn't think that was actually going to work, did you?"
-            ]
-        nick, host = user.split('!')
-        for pattern in self.owners:
-            if fnmatch(nick, pattern):
-                return True
-            elif fnmatch(host, pattern):
-                return True
-        return self.msg(channel, random.choice(denied))
-         
-
     def privmsg(self, user, channel, msg):
         slappy = [
             'slaps %s with reckless abandon.',
@@ -108,12 +88,9 @@ class BondBot(irc.IRCClient):
         }
 
         if msg.startswith('!'):
-            if self.is_owner(channel, user):
-                msg = msg.split()
-                command, args = msg[0][1:], msg[1:]
-                commands.get(command, error)(*args)
-
-        
+            msg = msg.split()
+            command, args = msg[0][1:], msg[1:]
+            commands.get(command, error)(*args)
             
 class BondBotFactory(protocol.ClientFactory):
     protocol = BondBot
