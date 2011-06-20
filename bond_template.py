@@ -210,13 +210,13 @@ class Bot:
 
 
 if __name__ == "__main__":
-    bot = Bot('irc.freenode.net', 6667, 'gibs0n', 'gibson', 'iAmerikan')
+    bot = Bot('irc.freenode.net', 6667, 'NICK', 'NICK', 'OWNER')
     try:
         bot.connect()
         bot.flush()
-        bot.identify('g00gl3', 'iAmerikan')
+        bot.identify('PASS', 'Owner')
         time.sleep(0.3)
-        bot.join('##blackhats')
+        bot.join('CHANNEL')
         bot.mainloop()
 
     except:
