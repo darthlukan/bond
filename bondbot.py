@@ -1,6 +1,7 @@
 from twisted.words.protocols import irc
 from twisted.internet import protocol, reactor
 from twisted.python import log
+from fnmatch import fnmatch
 import sys
 import time
 
@@ -19,6 +20,7 @@ class Logger:
 
 
 class BondBot(irc.IRCClient):
+        
     @property
     def nickname(self):
         return self.factory.nickname
@@ -43,14 +45,75 @@ class BondBot(irc.IRCClient):
     def joined(self, channel):
         self.logger.log("[I have joined %s]" % channel)
 
-    def privmsg(self, user, channel, msg):
-        nick, host = user.split('!')
-        self.msg(self.factory.channel, msg)
-        #cmd_prefix = "#"   # This is where I define who root is (me)
-        #for "#" in msg:
-        #    if nick == 'darthlukan'
-                
+    # Security and commands down here    
+    # Thanks to zeekay for this!
+    owners = ['darthlukan', 'iAmerikan']
 
+    def is_owner(self, channel, user):
+        denied = [
+            "I'm sorry there chap, I belong to Great Britain.",
+            "I don't beleive we've met."
+            "Some people never learn."
+            "Come now darling, I have other things in mind for us."
+            "You didn't think that was actually going to work, did you?"
+            ]
+        nick, host = user.split('!')
+        for pattern in self.owners:
+            if fnmatch(nick, pattern):
+                return True
+            elif fnmatch(host, pattern):
+                return True
+        return self.msg(channel, random.choice(denied))
+         
+
+    def privmsg(self, user, channel, msg):
+        slappy = [
+            'slaps %s with reckless abandon.',
+            'slaps %s with a gold finger.',
+            'slaps %s with an unequaled pimp hand.'
+            ]
+        huggy = [
+            'hugs %s.'
+            'cuddles %s.'
+            'holds %s a little too long for comfort.'
+            'Shows %s his pedobear.'
+            ]
+        killy = [
+            'kills %s.'
+            'makes a title song credit out of %s.'
+            'busts out with the muy thai all up in %s\'s face.'
+            'takes %s down faster than a nameless henchmen.'
+            ]
+        def repeat(*args):
+            self.msg(channel, ' '.join(args))
+
+        def hug(*args):
+            self.me(channel, random.choice(huggy) % args[0])
+            
+        def slap(*args):
+            self.me(channel, random.choice(slappy) % args[0])
+        
+        def kill(*args):
+            self.me(channel, random.choice(killy) % args[0])
+
+        def error(*args):
+            self.msg(channel, 'Not a valid command')
+
+        commands = {
+            'kill': kill,
+            'slap': slap,
+            'hug': hug,
+            'repeat': repeat
+        }
+
+        if msg.startswith('!'):
+            if self.is_owner(channel, user):
+                msg = msg.split()
+                command, args = msg[0][1:], msg[1:]
+                commands.get(command, error)(*args)
+
+        
+            
 class BondBotFactory(protocol.ClientFactory):
     protocol = BondBot
     logger = Logger()
