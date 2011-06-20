@@ -14,6 +14,7 @@ from twisted.words.protocols import irc
 from twisted.internet import protocol
 from twisted.internet import reactor
 from twisted.python import log
+from collections import defaultdict
 import time
 import sys
 import os
@@ -36,6 +37,21 @@ class MessageLogger:
         self.file.close()
 
 class BondBot(irc.IRCClient):
+    markov = defaultdict(list)
+    STOP_WORD = "\n"
+
+def add_to_brain(msg, chain_length, write_to_file=False):
+    if write_to_file:
+        f = open('training_text.txt', 'a')
+        f.write(msg + '\n')
+        f.close()
+    buf = [STOP_WORD] * chain_length
+    for word in msg.split():
+        markov[tuple(buf)].append(word)
+        del buf[0]
+        buf.append(word)
+    markov[tuple(buf)].append(STOP_WORD)
+
     def _get_nickname(self):
         return self.factory.nickname
     nickname = property(_get_nickname)
