@@ -10,8 +10,8 @@ config = {
     'download_url': 'http://github.com/darthlukan/bond.git',
     'author_email': 'darthlukan@gmail.com',
     'version': '0.1',
-    'install_requires': ['nose', 'twisted'],
-    'packages': ['bond', 'bin'],
+    'install_requires': ['nose', 'twisted', 'json'],
+    'packages': ['bond', 'bin.qbranch'],
     'scripts': [],
     'name': 'bond'
 }

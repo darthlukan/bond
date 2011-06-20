@@ -5,11 +5,90 @@ twisted framework ( Hopefully :P ).
 This is the bot James bond would use if he were to bother
 with IRC!
 
-<<<<<<< HEAD
+
 Authors:
 
     Thomas Noe (iAmerikan)
     Brian Tomlinson [darthlukan]
 
-=======
->>>>>>> 69cbb5daab49d00036cefee79acece5208851137
+========================================================================================
+Bond IRC (bond)
+
+This bot is meant as a toy for learning more about python.
+
+It was coded on, tested on, and packaged completely on linux machines.  If you are using
+python version 2.7.2 this package should be OS agnostic, however, as it was not tested on
+a system with with "C:\", no claims of functionality are being made.
+
+Again, this is a toy and as Thomas and I get better with Python, this program may or may not
+be improved or even discarded completely.  In short, enjoy it for as long as you like or until
+it breaks beyond repair.
+
+========================================================================================
+
+INSTALLATION:
+
+Linux users may install this software as a user and should not need root.  Unpack the archive,
+cd into bondirc/ and enter $ python setup.py install    in your terminal.  
+
+NOTE: Some systems (*cough* Arch Linux and Gentoo *cough*) are already using Python 3.2 (Python3k).
+These users should note that python2.7 may or may not be installed, but is required.  If you have more 
+than one version of python installed, please use python2.7 as the command to install this package.
+
+$python2.7 setup.py install
+
+
+
+INITIAL SETUP:
+
+In your favorite text editor, open the bond.py file and scroll down.  the final block of code begins as 
+
+def run_bot(network ...
+
+
+Change irc.freenode.net to your preferred network, and change '#channel' to your preferred channel.
+If your port is different than '6667', please change it in the reactor.connectSSL and TCP lines.
+
+Once that is done, save your changes and run the file.  The simplest way to run the bot
+is to enter python bond/bond.py into your terminal as a user.  
+
+========================================================================================
+
+BASIC USE:
+
+Once the bot is connected to your channel, there are a few pre-configured commands.
+
+!repeat text = This command tells bond to echo whatever is said by this user.
+
+example: <darthlukan> !repeat Python is the greatest programming language EVAR!
+
+	*BondBot: Python is the greatest programming language EVAR!
+
+!hug user = this command will cause bond to /me hug user.  There is a catch,
+there are a few random actions pre-configured into the bot, all related to hugging.
+If any of these actions are not to your liking, they can be changed in bond.py.
+
+!slap user = A random action quite similar to a "slap".  Sometimes prefixed by the bot
+with "pimp".
+
+!kill user = It happens in IRC all of the time, sometimes you just can't get beyond
+wanting to kill someone.  Luckily, bond has a license for such mayhem.  As with the previous
+actions, our gentleman spy will choose his method of destroying your opponent at random.  Sometimes
+with great pleasure.
+
+
+google query = This is pretty simple.  google foo will return some google search results.
+
+=========================================================================================
+
+ADVANCED USE:
+
+You will undoubtedly get tired of the limits of the initial install of bond.  That said, 
+there is a reason why this program was written in python, so that it would be easy to learn on.
+This is also an open source project, if you don't like something by all means, IMPROVE IT!
+
+The bot itself is pretty simple, and adding your own commands is about as easy as it gets.
+Find where the other commands are defined in bond.py and use them as a template to create your own.
+More advanced options can be found by either learning python yourself, or using google.
+
+For even more advanced use, see the qbranch.py file and add your own plugins there.
