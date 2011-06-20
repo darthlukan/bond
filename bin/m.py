@@ -9,7 +9,7 @@ if __name__ == "__main__":
         print "Which channel am I off to this time M?"
         print "Example:"
         print "  python bond.py casino-royal"
-    if os.path.exists('training_text.txt', 'r')
+    if os.path.exists('training_text.txt', 'r'):
         f = open('training_text.txt', 'r')
         for line in f:
             add_to_brain(line, chain_length)
