@@ -1,120 +1,83 @@
-#!/usr/bin/env python
-# # # # # # # # # # # # # # # # # # # # # # # # # #
-# "The name's Bond, James Bond."                  #
-# Authors: Brian Tomlinson and Thomas Noe         #
-# Filename: bond.py                               #
-# License: We haven't decided yet.                #
-# Notes: This bot is a first collaborative        #
-# effort for two new python programmers.          #
-# It's not meant to be the best bot in the world. #
-# Hide your women, Bond has a license to kill.    #
-# # # # # # # # # # # # # # # # # # # # # # # # # #
-
 from twisted.words.protocols import irc
-from twisted.internet import protocol
-from twisted.internet import reactor
+from twisted.internet import protocol, reactor
 from twisted.python import log
-from collections import defaultdict
-import time
 import sys
-import os
+import time
 
-
-class MessageLogger:
-    """
-    I'll be sure to report everything to Q Branch as always.
-    """
-    def __init__(self, log_file='bondbotlog.txt'):
+class Logger:
+    def __init__(self, log_file='log.txt'):
         self.file = open(log_file, 'a')
-    
+
     def log(self, message):
-        """Certainly, I'll jot that down."""
+        """Write a message to the file."""
         timestamp = time.strftime("[%H:%M:%S]", time.localtime(time.time()))
         self.file.write('%s %s\n' % (timestamp, message))
         self.file.flush()
-        
+
     def close(self):
         self.file.close()
 
+
 class BondBot(irc.IRCClient):
-    markov = defaultdict(list)
-    STOP_WORD = "\n"
-
-def add_to_brain(msg, chain_length, write_to_file=False):
-    if write_to_file:
-        f = open('training_text.txt', 'a')
-        f.write(msg + '\n')
-        f.close()
-    buf = [STOP_WORD] * chain_length
-    for word in msg.split():
-        markov[tuple(buf)].append(word)
-        del buf[0]
-        buf.append(word)
-    markov[tuple(buf)].append(STOP_WORD)
-
-    def _get_nickname(self):
+    @property
+    def nickname(self):
         return self.factory.nickname
-    nickname = property(_get_nickname)
-    
-    def signed_on(self):
+
+    @property
+    def logger(self):
+        return self.factory.logger
+
+    def connectionMade(self):
+        irc.IRCClient.connectionMade(self)
+        self.logger.log("[connected at %s]" % time.asctime(time.localtime(time.time())))
+
+    def connectionLost(self, reason):
+        irc.IRCClient.connectionLost(self, reason)
+        self.logger.log("[disconnected at %s]" % time.asctime(time.localtime(time.time())))
+        self.logger.close()
+
+    def signedOn(self):
+        self.setNick(self.nickname)
         self.join(self.factory.channel)
-        print "%s here. I've signed in." % (self.nickname)
-        
+
     def joined(self, channel):
-        print "Yes that's right, the channel is %s." % (channel,)
-        
+        self.logger.log("[I have joined %s]" % channel)
+
     def privmsg(self, user, channel, msg):
-        if not user:
-            return
-        if self.nickname in msg:
-            msg = re.compile(self.nickname + "[:,]* ?", re.I).sub('', msg)
-            prefix = "%s: " % (usr.split('!', 1) [0], )
-        else:
-            prefix = ''
-        add_to_brain(msg, self.factory.chain_length, write_to_file=True)
-        if prefix or random.random() <= self.factory.chattiness:
-            sentence = generate_sentence(msg, self.factory.chain_length,
-                                         self.factory.max_words)
-            if sentence:
-                self.msg(self.factory.channel, prefix + sentence)
-        
+        nick, host = user.split('!')
+        self.msg(self.factory.channel, msg)
+        #cmd_prefix = "#"   # This is where I define who root is (me)
+        #for "#" in msg:
+        #    if nick == 'darthlukan'
+                
+
 class BondBotFactory(protocol.ClientFactory):
     protocol = BondBot
-    
-    def __init__(self, channel, nickname='BondBot', chain_length=3,
-        chattiness=1.0, max_words=10000):
+    logger = Logger()
+
+    def __init__(self, channel, nickname='BondBot'):
         self.channel = channel
         self.nickname = nickname
-        self.chain_length = chain_length
-        self.chattiness = chattiness
-        self.max_words = max_words
-        
-    def clientConnectionLost(self, connector, reason):
-        print "I've lost the connection to (%s), reconnecting." % (reason,)
-        connector.connect()
-        
-    def clientConnectionFailed(self, connector, reason):
-        print "Unable to connect: %s" % (reason,)
-        
-    # if __name__ == '__main__':
-    #    reactor.run()
 
-if __name__ == "__main__":
+    def clientConnectionLost(self, connector, reason):
+        self.logger.log("I've lost the connection to (%s), reconnecting." % reason)
+        connector.connect()
+
+    def clientConnectionFailed(self, connector, reason):
+        self.logger.log("Unable to connect: %s" % reason)
+        reactor.stop
+
+
+def run_bot(network='irc.freenode.net', channel="##blackhats"):
+    log.startLogging(sys.stdout)
+    factory = BondBotFactory(channel)
     try:
-        chan = sys.argv[1]
-    except IndexError:
-        print "Which channel am I off to this time M?"
-        print "Example:"
-        print "  python bond.py casino-royal"
-    if os.path.exists('training_text.txt' 'r'):
-        f = open('training_text.txt', 'r')
-        for line in f:
-            add_to_brain(line, chain_length)
-        print 'Brain Reloaded'
-        f.close()
-    reactor.connectTCP('irc.freenode.net', 6667, BondBotFactory("##" + chan,
-                                                                'BondBot', 2, chattiness=0.05))
-    
+        from twisted.internet import ssl
+        context = ssl.ClientContextFactory()
+        reactor.connectSSL(network, 6697, factory, context)
+    except:
+        reactor.connectTCP(network, 6667, factory)
     reactor.run()
-    
-    
+
+if __name__ == '__main__':
+    run_bot()
