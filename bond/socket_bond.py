@@ -8,6 +8,9 @@ with our initial setup? so many options here. can make
 config based, etc.
 This is all I'll write for tonight, because there's some braindstorming to 
 be had tomorrow. -- Thomas
+
+There's also "How to connect to multiple channels and servers?"
+and the matter of what to put in what class, or function.
 """
 
 __version__ == 0.1
@@ -38,3 +41,6 @@ class James(object):
 
 
 
+# def sockConnect(s):
+#     s.connect(host, port)
+#     return s
