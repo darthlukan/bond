@@ -13,7 +13,27 @@
 from twisted.words.protocols import irc
 from twisted.internet import protocol
 from twisted.internet import reactor
+from twisted.python import log
+import time
 import sys
+import os
+
+
+class MessageLogger:
+    """
+    I'll be sure to report everything to Q Branch as always.
+    """
+    def __init__(self, log_file='bondbotlog.txt'):
+        self.file = open(log_file, 'a')
+    
+    def log(self, message):
+        """Certainly, I'll jot that down."""
+        timestamp = time.strftime("[%H:%M:%S]", time.localtime(time.time()))
+        self.file.write('%s %s\n' % (timestamp, message))
+        self.file.flush()
+        
+    def close(self):
+        self.file.close()
 
 class BondBot(irc.IRCClient):
     def _get_nickname(self):
@@ -62,7 +82,7 @@ class BondBotFactory(protocol.ClientFactory):
         
     # if __name__ == '__main__':
     #    reactor.run()
-    
+
 if __name__ == "__main__":
     try:
         chan = sys.argv[1]
@@ -70,14 +90,15 @@ if __name__ == "__main__":
         print "Which channel am I off to this time M?"
         print "Example:"
         print "  python bond.py casino-royal"
-    if os.path.exists('training_text.txt', 'r'):
+    if os.path.exists('training_text.txt' 'r'):
         f = open('training_text.txt', 'r')
         for line in f:
             add_to_brain(line, chain_length)
         print 'Brain Reloaded'
         f.close()
-    reactor.connectTCP('irc.freenode.net', 6667, BondBotFactory('#' + chan,
+    reactor.connectTCP('irc.freenode.net', 6667, BondBotFactory("##" + chan,
                                                                 'BondBot', 2, chattiness=0.05))
+    
     reactor.run()
     
     
