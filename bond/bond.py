@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Filename : bond.p                                               #
+# Filename : bond.py                                               #
 # Description: Basic IRC bot written in python using twisted      #
 # License: Undecided                                              #
 # Authors: Brian Tomlinson and Thomas Noe                         #
@@ -14,7 +14,7 @@ from twisted.words.protocols import irc
 from twisted.internet import protocol, reactor
 from twisted.python import log
 from fnmatch import fnmatch
-import qbranch
+from qbranch import google
 import random
 import sys
 import time
@@ -77,6 +77,12 @@ class BondBot(irc.IRCClient):
             'busts out with the muy thai all up in %s\'s face.',
             'takes %s down faster than a nameless henchmen.'
             ]
+        advice = [
+            'says: "Always keep your pimp hand strong."',
+            'says: "Bros before Hos, always."'
+            ]
+        google = qbranch.google
+        
         def repeat(*args):
             self.msg(channel, ' '.join(args))
 
@@ -88,11 +94,16 @@ class BondBot(irc.IRCClient):
         
         def kill(*args):
             self.me(channel, random.choice(killy) % args[0])
+        
+        def advice(*args):
+            self.me(channel, random.choive(advice) % args[0])
 
         def error(*args):
             self.msg(channel, 'Not a valid command')
 
         commands = {
+            'google': google,
+            'advice': advice,
             'kill': kill,
             'slap': slap,
             'hug': hug,
