@@ -14,7 +14,7 @@ from twisted.words.protocols import irc
 from twisted.internet import protocol, reactor
 from twisted.python import log
 from fnmatch import fnmatch
-from qbranch import google
+#from qbranch import google
 import random
 import sys
 import time
@@ -77,12 +77,13 @@ class BondBot(irc.IRCClient):
             'busts out with the muy thai all up in %s\'s face.',
             'takes %s down faster than a nameless henchmen.'
             ]
-        advice = [
+        advise = [
             'says: "Always keep your pimp hand strong."',
-            'says: "Bros before Hos, always."'
+            'says: "Bros before Hos, always."',
+            'says: "Keep your friends close and your enemies dead."',
+            'says: "Vote Cthulhu, why choose the lesser evil?"',
+            'says: "In a world without walls, who needs Windows?"'
             ]
-        google = qbranch.google
-        
         def repeat(*args):
             self.msg(channel, ' '.join(args))
 
@@ -96,14 +97,13 @@ class BondBot(irc.IRCClient):
             self.me(channel, random.choice(killy) % args[0])
         
         def advice(*args):
-            self.me(channel, random.choive(advice) % args[0])
+            self.me(channel, random.choice(advise) % args[0])
 
         def error(*args):
             self.msg(channel, 'Not a valid command')
 
         commands = {
-            'google': google,
-            'advice': advice,
+            'advise': advice,
             'kill': kill,
             'slap': slap,
             'hug': hug,
@@ -132,7 +132,7 @@ class BondBotFactory(protocol.ClientFactory):
         reactor.stop
 
 
-def run_bot(network='irc.freenode.net', channel="##blackhats"):
+def run_bot(network='irc.freenode.net', channel="#tinfoilhats"):
     log.startLogging(sys.stdout)
     factory = BondBotFactory(channel)
     try:
